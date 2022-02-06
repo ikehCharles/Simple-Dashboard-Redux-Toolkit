@@ -1,24 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
+import { useSelector } from 'react-redux';
+import { Link, Route, Routes } from 'react-router-dom';
 import './App.css';
+import { RootState } from './app/store';
+import UsersEntry from './components/users/usersEntry';
+import UsersGrid from './components/users/usersGrid';
 
 function App() {
+  const users = useSelector((state: RootState) => state.users);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {(users.status === "error" || users.status==="success") && <h1>{users.message}({users.status})</h1>}
+      <h2 style={{margin: "20px"}}>
+        <Link style={{color:'#000000', textDecoration: "none"}} to="/">
+        Dashboard
+        </Link>
+        </h2>
+      <Routes>
+        <Route path="/" element={ <UsersGrid  /> } />
+        <Route path="entry" element={ <UsersEntry users={users} /> } />
+      </Routes>
+      
     </div>
   );
 }

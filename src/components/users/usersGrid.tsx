@@ -10,16 +10,18 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { getUsers, removeUser } from "../../features/usersSlice";
 import { BlackButton } from "../styled/Button.styled";
 import { Link, useNavigate } from "react-router-dom";
+import AlertDialog from "../utilities/popup";
 
 export default function UsersGrid() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [openPopup, setOpenPopup] = useState(false)
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", minWidth: 100, flex: 1 },
     { field: "name", headerName: "Name", minWidth: 200, flex: 1 },
@@ -60,13 +62,20 @@ export default function UsersGrid() {
       },
     },
   ];
+  const closeDialog = (val:string)=>{
+    setOpenPopup(false);
+    if(val === "proceed"){
+      setTimeout(() => dispatch(removeUser(row)));
+    }
+  }
+  const [row, setRow] = useState(null)
   const handleClick = (
     action: string,
     cellValues: GridRenderCellParams<any>
   ) => {
     if (action === "delete") {
-      setTimeout(() => dispatch(removeUser(cellValues.row)));
-      console.log(users);
+      setRow(cellValues.row) 
+      setOpenPopup(true)
     }
     if (action === "edit") {
       navigate(`/entry?${cellValues.row.id}`, {
@@ -131,6 +140,12 @@ export default function UsersGrid() {
           />
         </div>
       </div>
+      <AlertDialog closeDialog={closeDialog} title={"You are about to delete this user"} openPopup={openPopup} >
+        <p style={{color: 'red'}}>
+
+          Would you like to proceed ?
+        </p>
+      </AlertDialog>
     </>
   );
 }

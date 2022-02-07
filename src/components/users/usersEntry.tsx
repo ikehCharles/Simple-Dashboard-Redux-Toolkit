@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { Box, TextField } from "@mui/material";
-import { addUser, editUser, InitialState } from "../../features/usersSlice";
+import { addUser, editUser } from "../../features/usersSlice";
 import { BlackButton } from "../styled/Button.styled";
 import { FormBox } from "../styled/Box.styled";
 import { RootState } from "../../app/store";
@@ -11,23 +11,22 @@ interface CustomizedState {
   userId: string;
 }
 
-export default function UsersEntry({users}:{users:InitialState}) {
-  console.error(users)
+export default function UsersEntry() {
+  const navigate = useNavigate();
   const [id, setId] = useState("new");
   const [apiErrorState, setApiErrorState] = useState(false);
-  const [apiError, setApiError] = useState("");
   const [usernameError, setUsernameError] = useState(false);
   const [usernameErrorMsg, setUsernameErrorMsg] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMsg, setEmailErrorMsg] = useState("");
-  const navigate = useNavigate();
   const location = useLocation();
   const search = location.search;
   const state = location.state as CustomizedState;
+  const users = useSelector((state: RootState) => state.users);
 
   const dispatch = useDispatch();
   const userFormRef: React.LegacyRef<HTMLFormElement> | null = useRef(null);
-  const saveUser = (e: React.SyntheticEvent<EventTarget>) => {
+  const SaveUser = (e: React.SyntheticEvent<EventTarget>) => {
     e.preventDefault();
     if (userFormRef.current) {
       const formValues: any = {
@@ -67,24 +66,20 @@ export default function UsersEntry({users}:{users:InitialState}) {
         }
       }
       if (id === "new") {
-        console.warn(users.status, users.message);
         dispatch(addUser(formValues));
-        
-        console.warn(users.status,"check");
-        if (users.status === "success") {
-          navigate("/");
-        }
+      
       } else {
         dispatch(editUser({ ...formValues, id }));
       }
+      setRedirect(true)
 
-      // setApiErrorState(true);
-
-      return false;
+      
     }
     return false;
   };
+
   
+  const [redirect, setRedirect] = useState(false)
 
   const populateUser = (userId: any) => {
     setId(userId);
@@ -92,7 +87,6 @@ export default function UsersEntry({users}:{users:InitialState}) {
     const user = users.value.find((user) => user.id === userId);
     if (!user) return;
 
-    console.error(user);
     if (userFormRef.current) {
       const fields = userFormRef.current.elements;
       for (let i = 0; i < fields.length; i++) {
@@ -115,6 +109,17 @@ export default function UsersEntry({users}:{users:InitialState}) {
     }
   };
 
+  useEffect(()=>{
+    if(redirect){
+      if(users.status=== "success"){
+        navigate("/")
+      }else{
+        setApiErrorState(true)
+        setRedirect(false)
+      }
+    }
+  }, [users, navigate, redirect])
+
   useEffect(() => {
     if ((state && state.userId) || (search && search.split("")[1])) {
       populateUser(state.userId || search.split("")[1]);
@@ -123,6 +128,7 @@ export default function UsersEntry({users}:{users:InitialState}) {
 
   return (
     <>
+
       <FormBox
         ref={userFormRef}
         component="form"
@@ -137,7 +143,7 @@ export default function UsersEntry({users}:{users:InitialState}) {
             lg: "60%",
           },
         }}
-        onSubmit={saveUser}
+        onSubmit={SaveUser}
       >
         <h2
           style={{
@@ -227,7 +233,7 @@ export default function UsersEntry({users}:{users:InitialState}) {
             variant="outlined"
           />
         </Box>
-        {apiErrorState && <p>{users.message}</p>}
+        {apiErrorState && <p style={{color: "red"}}>{users.message}</p>}
         <div style={{ display: "flex", justifyContent: "center" }}>
           <BlackButton
             sx={{
@@ -241,7 +247,7 @@ export default function UsersEntry({users}:{users:InitialState}) {
             sx={{
               margin: "10px",
             }}
-            onClick={saveUser}
+            onClick={SaveUser}
           >
             Save
           </BlackButton>

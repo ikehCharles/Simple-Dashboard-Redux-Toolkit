@@ -54,27 +54,29 @@ export const userSlice = createSlice({
   name: "users",
   initialState: initialState,
   reducers: {
+    resetUser: (state, {payload}: PayloadAction)=>{},
     addUser: (state, { payload }: PayloadAction<User>) => {
-      // state.status = RESPONSE.PENDING;
+      
+      state.status = RESPONSE.PENDING;
       const indexEmail = state.value.findIndex((user) => user.email === payload.email);
       const indexUsername = state.value.findIndex((user) => user.username === payload.username );
-      
       if (indexEmail >= 0) {
         state.status = RESPONSE.ERROR;
         state.message =
           "User already exist, Kindly use another email";
-        return;
+        return state;
       }
       if (indexUsername >= 0) {
         state.status = RESPONSE.ERROR;
         state.message =
           "User already exist, Kindly use another username";
-        return;
+        return state;
       }
-      payload.id = Math.floor(Math.random() * 91482948827838);
-      state.value = [payload].concat(state.value);
-      state.status = RESPONSE.SUCCESS;
-      state.message = "User successfully created";
+        payload.id = Math.floor(Math.random() * 91);
+        state.value = [payload].concat(state.value);
+        state.status = RESPONSE.SUCCESS;
+        state.message = "User successfully created";
+      
     },
     removeUser: (state, { payload }: PayloadAction<User>) => {
       state.status = RESPONSE.PENDING;
@@ -92,7 +94,6 @@ export const userSlice = createSlice({
     },
     editUser: (state, { payload }: PayloadAction<User>) => {
       state.status = RESPONSE.PENDING;
-      console.log(payload);
       const index = state.value.findIndex((user) => user.id === payload.id);
       if (index >= 0) {
         state.value[index] = payload;

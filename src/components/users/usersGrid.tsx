@@ -17,6 +17,7 @@ import { getUsers, removeUser } from "../../features/usersSlice";
 import { BlackButton } from "../styled/Button.styled";
 import { Link, useNavigate } from "react-router-dom";
 import AlertDialog from "../utilities/popup";
+import { useHeaderTitle } from "../../context/headerTitle.ctx";
 
 export default function UsersGrid() {
   const navigate = useNavigate();
@@ -91,7 +92,13 @@ export default function UsersGrid() {
     if (!users || !users.value.length) {
       dispatch(getUsers());
     }
+
   }, [dispatch]);
+
+  const {setHeaderTitle} = useHeaderTitle()
+  useEffect(()=>{
+    setHeaderTitle("Dashboard")
+  }, [setHeaderTitle])
 
   return (
     <>

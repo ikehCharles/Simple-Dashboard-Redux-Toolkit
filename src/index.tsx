@@ -6,12 +6,15 @@ import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
 import { BrowserRouter } from "react-router-dom";
+import { HeaderTitleProvider } from "./context/headerTitle.ctx";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
+        <HeaderTitleProvider>
+          <App />
+        </HeaderTitleProvider>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,

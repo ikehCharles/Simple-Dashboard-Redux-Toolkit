@@ -1,6 +1,17 @@
-# Getting Started with Create React App
+# Simple Dashboard Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a simple user dashboard bootstrapped with an external API [JSON Placeholder API](https://my-json-server.typicode.com/karolkproexe/jsonplaceholderdb/data).
+
+## Functionality
+This sample project aims at onboarding, creating, editing and deleting users all using a local store (redux)
+
+## Major Tools/Libraries
+
+React-Redux
+Redux Toolkit
+React Context API
+Material UI
+
 
 ## Available Scripts
 

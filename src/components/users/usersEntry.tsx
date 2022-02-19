@@ -6,6 +6,7 @@ import { BlackButton } from "../styled/Button.styled";
 import { FormBox } from "../styled/Box.styled";
 import { RootState } from "../../app/store";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useHeaderTitle } from "../../context/headerTitle.ctx";
 
 interface CustomizedState {
   userId: string;
@@ -125,6 +126,12 @@ export default function UsersEntry() {
       populateUser(state.userId || search.split("")[1]);
     }
   },[]);
+
+  const {setHeaderTitle} = useHeaderTitle()
+  useEffect(()=>{
+    setHeaderTitle("User Entry")
+  }, [setHeaderTitle])
+
 
   return (
     <>
